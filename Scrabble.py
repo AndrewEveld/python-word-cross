@@ -8,7 +8,8 @@ from typing import *
 from random import randint
 
 
-def choose_difficulty():
+# Promt user for a difficulty and return their choice
+def choose_difficulty() -> str:
     print('Choose difficulty:')
     print('easy: 2 letter words or higher')
     print('medium: 3 letter words or higher')
@@ -20,6 +21,7 @@ def choose_difficulty():
     return choice
 
 
+# Takes arguments 'hard', 'medium', or 'easy' and returns int 4, 3, or 2 respectively dependent on argument.
 def min_word(difficulty: str) -> int:
     if difficulty == 'hard':
         word: int = 4
@@ -30,7 +32,9 @@ def min_word(difficulty: str) -> int:
     return word
 
 
-def word_search(word, english_words: List[str]):
+# Takes paramenters word and english_words and uses binary search method to decide if word is in english_words.
+# Returns boolean value, True if yes and False if no. 
+def word_search(word, english_words: List[str]) -> bool:
     word = word.lower()
     first = 0
     last = len(english_words) - 1
@@ -47,6 +51,9 @@ def word_search(word, english_words: List[str]):
     return found
 
 
+# Returns a dictionary with a 7 x 7 gameboard with all values initialized to string '0'. 
+# First character of keys are capital letters from A-G and second characters are numbers 1-7.
+# A-G corresponds to the row a value is in and 1-7 correspond to the column. 
 def create_board() -> Dict[str, str]:
     board: Dict[str, str] = {}
     for i in range(7):
@@ -56,6 +63,7 @@ def create_board() -> Dict[str, str]:
     return board
 
 
+# Prints out the 2D gameboard parameter. 
 def print_board(board: Dict[str, str]):
     print('   1 2 3 4 5 6 7')
     for i in range(7):
@@ -65,6 +73,9 @@ def print_board(board: Dict[str, str]):
         print(row)
 
 
+# Takes desired word, keys of the values of the word on the game board, points of the current letters on game board,
+# difficulty number of current game, and list of english words.
+# Returns dictionary that has the points of each value including the word just added. 
 def point_system(word: str, word_key: List[str], character_points: Dict[str, int], difficulty: int, english_words: List[str]):
     if word_search(word, english_words) and len(word) >= difficulty:
         for key in word_key:
@@ -112,6 +123,8 @@ def validate_letters(board: Dict[str, str], difficulty: int, orientation: int, e
     return to_return
 
 
+# Takes the current board, difficulty and list of english words as parameters.
+# Returns boolean base on if the board is valid based on the rules of the game.
 def check_board_valid(board: Dict[str, str], difficulty: int, english_words: List[str]):
     char_points_1: Dict[str, int] = validate_letters(board, difficulty, 0, english_words)
     char_points_2: Dict[str, int] = validate_letters(board, difficulty, 1, english_words)
@@ -123,12 +136,18 @@ def check_board_valid(board: Dict[str, str], difficulty: int, english_words: Lis
     return True
 
 
+# Replaces letter used from the last turn with random letters.
+# Takes list of strings as parameter.
+# Returns list with new random letters.
 def fill_letters(current_letters: List[str]) -> List[str]:
     while len(current_letters) < 10:
         current_letters.append(chr(65 + randint(0, 25)))
     return current_letters
 
 
+# Takes a list of letters as parameter.
+# Prompts user for a word created from the letters.
+# Returns word user made.
 def get_word(choices: List[str]) -> str:
     print('What word would you like to place?')
     print(choices)
@@ -141,6 +160,8 @@ def get_word(choices: List[str]) -> str:
     return choice
 
 
+# Takes a word and list of letters as parameters.
+# Returns boolean True if word can be made using the letters in the string and False if not. 
 def check_typed_word(word: str, choices: List[str]) -> bool:
     check_choices: List[str] = []
     for letter in choices:
@@ -156,6 +177,8 @@ def check_typed_word(word: str, choices: List[str]) -> bool:
     return done
 
 
+# Prompts user for the location of the starting key of their word. 
+# Returns list that has the row (A-G) and index 0 and column (1-7) as index 1.
 def letter_placement() -> List[str]:
     row: str = input('Which row do you wish to place the first letter of your word in? ').upper()
     column: str = input('Which column do you wish to place the first letter of your word in? ')
@@ -174,6 +197,8 @@ def letter_placement() -> List[str]:
     return placement_list
 
 
+# Takes dictionary as parameter.
+# Returns duplicate of dictionary that is stored in different location.
 def update_test_board(board: Dict[str, str]) -> Dict[str, str]:
     test_board: Dict[str, str] = {}
     for key in board:
@@ -181,6 +206,8 @@ def update_test_board(board: Dict[str, str]) -> Dict[str, str]:
     return test_board
 
 
+# Takes list of letters as parameter.
+# Returns duplicate of the list.
 def update_test_letters(letters: List[str]) -> List[str]:
     test_letters: List[str] = []
     for letter in letters:
@@ -188,6 +215,8 @@ def update_test_letters(letters: List[str]) -> List[str]:
     return test_letters
 
 
+# Takes a board dictionary as parameter.
+# Returns the int number of letters on the board. 
 def tally_points(board: Dict[str, str]) -> int:
     score: int = 0
     for key in board:
@@ -196,12 +225,16 @@ def tally_points(board: Dict[str, str]) -> int:
     return score
 
 
+# Takes the list of letters and the word chosen by user as parameters.
+# Returns the letters from the list that were not used. 
 def subtract_letters(letter_list: List[str], letters: str):
     for letter in letters:
         letter_list.remove(letter)
     return letter_list
 
 
+# Takes a board dictionary, string word, row-column list, and orientation as parameters.
+# Returns the board with the word added onto it starting at the desired row and column and orientaion.
 def place_word(board: Dict[str, str], word: str, placement: List[str], orientation: str) -> Dict[str, str]:
     if orientation == 'HORIZONTAL':
         for i in range(len(word)):
@@ -212,6 +245,8 @@ def place_word(board: Dict[str, str], word: str, placement: List[str], orientati
     return board
 
 
+# Takes board dictionary, string word, orientation, and placement as parameters.
+# Returns boolean True if the word fits in desired location and False if not. 
 def will_word_fit(board: Dict[str, str], word: str, orientation: str, placement: List[str]) -> bool:
     if orientation == 'HORIZONTAL':
         if len(word) - 1 + int(placement[1]) > 7:
@@ -229,6 +264,8 @@ def will_word_fit(board: Dict[str, str], word: str, orientation: str, placement:
         return True
 
 
+# Prompts the user the desired orientation of their selected word.
+# Returns string 'VERTICAL' or 'HORIZONTAL'.
 def word_orientation() -> str:
     print('Place the word vertically or horizontally?')
     print('Vertical will start at the beginning letter and go down.')
@@ -244,6 +281,8 @@ def word_orientation() -> str:
     return orientation
 
 
+# Takes the previous answer as parameter.
+# Returns 'YES' or 'NO' once user types either one. 
 def y_n(answer: str) -> str:
     while answer != 'YES' and answer != 'NO':
         answer = input('Please answer "yes" or "no": ').upper()
