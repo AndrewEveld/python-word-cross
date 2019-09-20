@@ -290,7 +290,7 @@ def y_n(answer: str) -> str:
 
 
 def main():
-    f = open('english2.txt', "r")
+    f = open("english2.txt", "r")
     english_words = []
     for line in f:
         english_words.append(line.lower().strip())
