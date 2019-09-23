@@ -76,7 +76,8 @@ def print_board(board: Dict[str, str]):
 # Takes desired word, keys of the values of the word on the game board, points of the current letters on game board,
 # difficulty number of current game, and list of english words.
 # Returns dictionary that has the points of each value including the word just added. 
-def point_system(word: str, word_key: List[str], character_points: Dict[str, int], difficulty: int, english_words: List[str]):
+def point_system(word: str, word_key: List[str], character_points: Dict[str, int], difficulty: int, english_words:
+                 List[str]) -> Dict[str, int]:
     if word_search(word, english_words) and len(word) >= difficulty:
         for key in word_key:
             character_points[key] += 1
@@ -125,14 +126,19 @@ def validate_letters(board: Dict[str, str], difficulty: int, orientation: int, e
 
 # Takes the current board, difficulty and list of english words as parameters.
 # Returns boolean base on if the board is valid based on the rules of the game.
-def check_board_valid(board: Dict[str, str], difficulty: int, english_words: List[str]):
-    char_points_1: Dict[str, int] = validate_letters(board, difficulty, 0, english_words)
-    char_points_2: Dict[str, int] = validate_letters(board, difficulty, 1, english_words)
-    for key in char_points_1:
-        char_points_1[key] += char_points_2[key]
-    for key in char_points_1:
-        if char_points_1[key] < 2:
-            return False
+def check_board_valid(board: Dict[str, str], english_words: List[str]) -> bool:
+    horizontal_words_string: str = ""
+    vertical_words_string: str = ""
+    for i in range(7):
+        for j in range(7):
+            horizontal_words_string += board[chr(65 + i) + str(j + 1)]
+            vertical_words_string += board[chr(65 + j) + str(i + 1)]
+    current_words_list: List[str] = horizontal_words_string.split("0")
+    current_words_list.extend(vertical_words_string.split("0"))
+    for word in current_words_list:
+        if len(word) > 1:
+            if word not in english_words:
+                return False
     return True
 
 
@@ -292,8 +298,10 @@ def y_n(answer: str) -> str:
 def main():
     f = open("english2.txt", "r")
     english_words = []
+
     for line in f:
-        english_words.append(line.lower().strip())
+        english_words.append(line.upper().strip())
+
     print('You are playing Python Bonanza!')
     print('You will be given 7 letters')
     print('You must make words out of these letters on a blank 7 x 7 board.')
@@ -304,11 +312,13 @@ def main():
     print('other words to make words on your board.')
     print('Words are not required to be connected to be counted in your final score.')
     print('You receive one point for every letter you successfully place.')
+
     difficulty: int = min_word(choose_difficulty())
     board: Dict[str, str] = create_board()
     letters: List[str] = ['E', 'A', 'R', 'I', 'O', 'T', 'N', 'S', 'L', 'C']
     test_letters = update_test_letters(letters)
     test_board: Dict[str, str] = update_test_board(board)
+
     done: bool = False
     while not done:
         print_board(test_board)
@@ -327,7 +337,7 @@ def main():
                 test_letters = update_test_letters(letters)
                 test_board = update_test_board(board)
                 print_board(test_board)
-        if check_board_valid(test_board, difficulty, english_words):
+        if check_board_valid(test_board, english_words):
             test_letters = fill_letters(test_letters)
             letters = update_test_letters(test_letters)
             board = update_test_board(test_board)
